@@ -1,7 +1,11 @@
 <template>
   <div class="hemo-wrapper">
     <v-container grid-list-xs text-xs-center>
-      <c-topics :items="items"></c-topics>
+      <c-down-refresh :refresh="refresh">
+        <c-up-loadmore :loadMore="fetchData" :isAllLoaded="isAllLoaded">
+          <c-topics :items="items"></c-topics>
+        </c-up-loadmore>
+      </c-down-refresh>
       <v-btn color="pink" fab dark primary fixed bottom right>
         <v-icon>add</v-icon>
       </v-btn>
@@ -10,16 +14,19 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import Topics from '@/components/Topics'
-import topics from '@/store/modules/topics-tag'
+import downRefresh from '@/components/down-refresh'
+import upLoadmore from '@/components/up-loadmore'
+
+let namespace = 'topics'
 
 export default {
   name: 'home',
   props: {},
   data() {
     return {
-      vuexModulePath: [],
+      topicsKey: '',
       titles: {
         all: 'Node.js专业中文社区',
         good: '精华',
@@ -31,48 +38,34 @@ export default {
     }
   },
   computed: {
-    $s() {
-      return {
-        state: name => {
-          return this.$store.state[this.vuexModulePath[0]][
-            this.vuexModulePath[1]
-          ][name]
-        },
-        getters: name => {
-          return this.$store.getters[[...this.vuexModulePath, name].join('/')]
-        },
-        actions: (name, payload) => {
-          return this.$store.dispatch(
-            [...this.vuexModulePath, name].join('/'),
-            payload
-          )
-        }
-      }
+    ...mapGetters('topics', ['getItems', 'getIsData']),
+    isAllLoaded() {
+      return this.$store.state[namespace].paginates[this.topicsKey].isAllLoaded
+    },
+    page() {
+      return this.$store.state[namespace].paginates[this.topicsKey].page
     },
     items() {
-      return this.$s.getters('items') || []
+      return this.getItems(this.topicsKey)
+    },
+    isData() {
+      return this.getIsData(this.topicsKey)
     }
   },
   asyncData({ store, route }) {
     let tab = route.params.tab || 'all'
-    let namespace = ['topics', tab]
-
-    store.registerModule(namespace, topics)
-
-    let page = store.state[namespace[0]][namespace[1]].page
-    return store.dispatch(`${namespace.join('/')}/fetchTopics`, {
-      tab: route.params.tab,
+    return store.dispatch(`${namespace}/fetchTopics`, {
+      key: tab,
       page: 1
     })
   },
   created() {
-    let tab = this.$route.params.tab || 'all'
-    this.vuexModulePath = ['topics', tab]
+    this.topicsKey = this.$route.params.tab || 'all'
   },
   activated() {
     this.setAppHeader({
       show: true,
-      title: `CNode：${this.titles[this.$route.params.tab || 'all']}`,
+      title: `CNode：${this.titles[this.topicsKey]}`,
       showMenu: true,
       showBack: false,
       showLogo: true
@@ -80,21 +73,27 @@ export default {
 
     this.activateBottomNav('home')
   },
-  beforeDestroy() {
-    this.$store.unregisterModule(this.vuexModulePath)
-  },
   methods: {
     ...mapActions('appShell/appHeader', ['setAppHeader']),
     ...mapActions('appShell/appBottomNavigator', [
       'showBottomNav',
       'activateBottomNav'
     ]),
-    fetchTopics(payload) {
-      return this.$s.actions('fetchTopics', payload)
+    ...mapActions(namespace, ['fetchTopics']),
+    fetchData(page) {
+      return this.fetchTopics({
+        key: this.topicsKey,
+        page: page || this.page + 1
+      })
+    },
+    refresh() {
+      return this.fetchData(1)
     }
   },
   components: {
-    [Topics.name]: Topics
+    [Topics.name]: Topics,
+    [downRefresh.name]: downRefresh,
+    [upLoadmore.name]: upLoadmore
   }
 }
 </script>

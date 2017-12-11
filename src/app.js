@@ -24,6 +24,7 @@ import { createRouter } from './router'
 import store from './store'
 import App from './App.vue'
 import Icon from 'vue-awesome/components/Icon.vue'
+import InfiniteScroll from '@/components/infinite-scroll'
 
 Vue.use(Vuetify, {
   components: {
@@ -43,6 +44,8 @@ Vue.use(Vuetify, {
 })
 
 Vue.component('icon', Icon)
+
+Vue.use(InfiniteScroll)
 
 Vue.filter('formatDate', str => {
   var date = new Date(str)

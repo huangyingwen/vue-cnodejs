@@ -14,10 +14,10 @@ const mutations = {
   [types.PAGINATE_REQUEST](state) {
     state.isFetching = true
   },
-  [types.PAGINATE_SUCCESS](state, { result, page, totalPage }) {
+  [types.PAGINATE_SUCCESS](state, { result, page, pageSize }) {
     state.ids = union(page !== 1 ? state.ids : [], result)
     state.page = page
-    state.isAllLoaded = page >= totalPage
+    state.isAllLoaded = (pageSize || 40) > result.length
     state.isFetching = false
   },
   [types.PAGINATE_FAILURE](state, ids) {
