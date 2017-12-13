@@ -6,7 +6,7 @@
           <c-topics :items="items"></c-topics>
         </c-up-loadmore>
       </c-down-refresh>
-      <v-btn color="pink" fab dark primary fixed bottom right>
+      <v-btn color="pink" fab dark primary fixed bottom right :to="{name: 'create'}">
         <v-icon>add</v-icon>
       </v-btn>
     </v-container>

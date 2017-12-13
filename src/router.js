@@ -13,6 +13,7 @@ let Detail = () => import('@/pages/Detail.vue')
 let NotFound = () => import('@/pages/NotFound.vue')
 let User = () => import('@/pages/User.vue')
 let Search = () => import('@/pages/Search.vue')
+let Create = () => import('@/pages/Create.vue')
 
 Vue.use(Router)
 
@@ -40,6 +41,14 @@ export function createRouter() {
         }
       },
       {
+        path: '/create',
+        name: 'create',
+        component: Create,
+        meta: {
+          notKeepAlive: true
+        }
+      },
+      {
         path: '/user',
         name: 'user',
         component: User
@@ -58,19 +67,19 @@ export function createRouter() {
   })
 
   /**
-     * 切换动画名称
-     *
-     * @type {string}
-     * @const
-     */
+   * 切换动画名称
+   *
+   * @type {string}
+   * @const
+   */
   const SLIDE_LEFT = 'slide-left'
 
   /**
-     * 切换动画名称
-     *
-     * @type {string}
-     * @const
-     */
+   * 切换动画名称
+   *
+   * @type {string}
+   * @const
+   */
   const SLIDE_RIGHT = 'slide-right'
 
   router.beforeEach((to, from, next) => {

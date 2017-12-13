@@ -18,13 +18,18 @@ import {
   VAvatar,
   VToolbar,
   VCard,
-  VBadge
+  VBadge,
+  VForm,
+  VTextField
 } from 'vuetify'
 import { createRouter } from './router'
 import store from './store'
 import App from './App.vue'
 import Icon from 'vue-awesome/components/Icon.vue'
 import InfiniteScroll from '@/components/infinite-scroll'
+import VueSimplemde from 'vue-simplemde'
+
+Vue.use(VueSimplemde)
 
 Vue.use(Vuetify, {
   components: {
@@ -39,7 +44,9 @@ Vue.use(Vuetify, {
     VAvatar,
     VToolbar,
     VCard,
-    VBadge
+    VBadge,
+    VForm,
+    VTextField
   }
 })
 
